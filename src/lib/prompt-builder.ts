@@ -1,8 +1,16 @@
 import type { ParsedCSV } from "@/types";
 
 const MAX_ROWS = 50;
+const MAX_FILENAME_LENGTH = 100;
+
+function sanitizeFileName(name: string): string {
+  return name
+    .replace(/[^A-Za-z0-9._\-]/g, "_")
+    .slice(0, MAX_FILENAME_LENGTH);
+}
 
 export function buildPrompt(csv: ParsedCSV, fileName: string): string {
+  fileName = sanitizeFileName(fileName);
   const totalRows = csv.rows.length;
   const truncatedRows = csv.rows.slice(0, MAX_ROWS);
 

@@ -36,7 +36,8 @@ function generateHTML(
   summary: string,
 ): string {
   const escapedSummary = escapeHTML(summary);
-  const configJSON = JSON.stringify(chartConfig);
+  const configJSON = JSON.stringify(chartConfig).replace(/</g, "\\u003c");
+  const safeChartType = chartType.replace(/[^a-zA-Z]/g, "");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -83,7 +84,7 @@ function generateHTML(
   <script>
     const ctx = document.getElementById('chart').getContext('2d');
     new Chart(ctx, {
-      type: '${chartType}',
+      type: '${safeChartType}',
       data: ${configJSON},
       options: {
         responsive: true,
@@ -142,4 +143,71 @@ Deno.test("escapes quotes in summary", () => {
   const html = generateHTML("bar", sampleConfig, 'He said "hello" & goodbye');
   assertStringIncludes(html, "&quot;hello&quot;");
   assertStringIncludes(html, "&amp;");
+});
+
+// Security tests
+
+Deno.test("chartType injection is sanitized", () => {
+  // deno-lint-ignore no-explicit-any
+  const html = generateHTML("bar'; alert(1); //" as any, sampleConfig, "Safe");
+  assertEquals(html.includes("alert(1)"), false);
+  assertStringIncludes(html, "type: 'baralert");
+});
+
+Deno.test("script-closing tag in labels does not break script block", () => {
+  const maliciousConfig: ChartConfiguration = {
+    labels: ['</script><script>alert("xss")</script>'],
+    datasets: [{ label: "Test", data: [1], borderWidth: 1 }],
+  };
+  const html = generateHTML("bar", maliciousConfig, "Safe summary");
+  // The raw </script> should not appear inside the data JSON
+  const dataStart = html.indexOf("data: {");
+  const scriptEnd = html.indexOf("</script>", dataStart);
+  const dataSection = html.slice(dataStart, scriptEnd);
+  assertEquals(dataSection.includes("</script>"), false);
+  assertStringIncludes(html, "\\u003c");
+});
+
+Deno.test("empty labels array produces valid output", () => {
+  const config: ChartConfiguration = {
+    labels: [],
+    datasets: [{ label: "Test", data: [], borderWidth: 1 }],
+  };
+  const html = generateHTML("bar", config, "Summary");
+  assertStringIncludes(html, "<!DOCTYPE html>");
+});
+
+Deno.test("empty datasets array produces valid output", () => {
+  const config: ChartConfiguration = {
+    labels: ["A"],
+    datasets: [],
+  };
+  const html = generateHTML("bar", config, "Summary");
+  assertStringIncludes(html, "<!DOCTYPE html>");
+});
+
+Deno.test("all 6 chart types produce valid output", () => {
+  const types: SupportedChartType[] = [
+    "bar",
+    "line",
+    "pie",
+    "doughnut",
+    "polarArea",
+    "radar",
+  ];
+  for (const t of types) {
+    const html = generateHTML(t, sampleConfig, "Summary");
+    assertStringIncludes(html, `type: '${t}'`);
+  }
+});
+
+Deno.test("empty string summary produces valid HTML", () => {
+  const html = generateHTML("bar", sampleConfig, "");
+  assertStringIncludes(html, "<!DOCTYPE html>");
+  assertStringIncludes(html, '<div class="summary"></div>');
+});
+
+Deno.test("backtick in summary does not break template", () => {
+  const html = generateHTML("bar", sampleConfig, "Value is `42`");
+  assertStringIncludes(html, "Value is `42`");
 });

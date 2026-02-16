@@ -68,3 +68,34 @@ Deno.test("isValidChartType rejects unknown types", () => {
 Deno.test("CHART_TYPES contains 6 chart types", () => {
   assertEquals(CHART_TYPES.length, 6);
 });
+
+// Edge case tests
+
+Deno.test("isValidChartType rejects mixed case", () => {
+  assertEquals(isValidChartType("Bar"), false);
+  assertEquals(isValidChartType("LINE"), false);
+  assertEquals(isValidChartType("Pie"), false);
+});
+
+Deno.test("isValidChartType rejects whitespace-padded types", () => {
+  assertEquals(isValidChartType(" bar"), false);
+  assertEquals(isValidChartType("bar "), false);
+  assertEquals(isValidChartType(" bar "), false);
+});
+
+Deno.test("isCartesianChart returns false for polarArea and radar", () => {
+  assertEquals(isCartesianChart("polarArea"), false);
+  assertEquals(isCartesianChart("radar"), false);
+});
+
+Deno.test("getChartTypeLabel returns correct label for all types", () => {
+  assertEquals(getChartTypeLabel("line"), "Line Chart");
+  assertEquals(getChartTypeLabel("doughnut"), "Doughnut Chart");
+  assertEquals(getChartTypeLabel("polarArea"), "Polar Area Chart");
+  assertEquals(getChartTypeLabel("radar"), "Radar Chart");
+});
+
+Deno.test("getChartTypeLabel returns raw type string for unknown type", () => {
+  // deno-lint-ignore no-explicit-any
+  assertEquals(getChartTypeLabel("scatter" as any), "scatter");
+});
