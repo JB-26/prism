@@ -33,7 +33,7 @@ export default function ExecutiveSummary({
             <button
               type="button"
               onClick={handleSave}
-              className="flex items-center gap-1 rounded bg-yellow-action px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-yellow-action-hover"
+              className="flex items-center gap-1 rounded bg-green-action px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-green-action-hover"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
