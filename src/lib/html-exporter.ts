@@ -15,7 +15,10 @@ export function generateHTML(
   summary: string,
 ): string {
   const escapedSummary = escapeHTML(summary);
-  const configJSON = JSON.stringify(chartConfig);
+  // Escape < in JSON to prevent </script> from breaking the script block
+  const configJSON = JSON.stringify(chartConfig).replace(/</g, "\\u003c");
+  // Sanitize chartType to only allow alphanumeric characters
+  const safeChartType = chartType.replace(/[^a-zA-Z]/g, "");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -62,7 +65,7 @@ export function generateHTML(
   <script>
     const ctx = document.getElementById('chart').getContext('2d');
     new Chart(ctx, {
-      type: '${chartType}',
+      type: '${safeChartType}',
       data: ${configJSON},
       options: {
         responsive: true,

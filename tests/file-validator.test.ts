@@ -82,3 +82,51 @@ Deno.test("accepts file at exactly 3MB", () => {
   });
   assertEquals(result.valid, true);
 });
+
+// Boundary and edge case tests
+
+Deno.test("rejects file at 3MB + 1 byte", () => {
+  const result = validateFile({
+    name: "big.csv",
+    type: "text/csv",
+    size: 3 * 1024 * 1024 + 1,
+  });
+  assertEquals(result.valid, false);
+  assertEquals(result.error, "File must be 3MB or less.");
+});
+
+Deno.test("accepts uppercase .CSV extension", () => {
+  const result = validateFile({
+    name: "data.CSV",
+    type: "text/csv",
+    size: 500,
+  });
+  assertEquals(result.valid, true);
+});
+
+Deno.test("accepts text/plain MIME with .csv extension", () => {
+  const result = validateFile({
+    name: "data.csv",
+    type: "text/plain",
+    size: 500,
+  });
+  assertEquals(result.valid, true);
+});
+
+Deno.test("rejects double extension data.csv.exe", () => {
+  const result = validateFile({
+    name: "data.csv.exe",
+    type: "application/octet-stream",
+    size: 500,
+  });
+  assertEquals(result.valid, false);
+});
+
+Deno.test("accepts zero-byte CSV file", () => {
+  const result = validateFile({
+    name: "empty.csv",
+    type: "text/csv",
+    size: 0,
+  });
+  assertEquals(result.valid, true);
+});

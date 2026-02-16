@@ -114,3 +114,49 @@ Deno.test("handles single row CSV (headers only)", () => {
   assertEquals(result.headers, ["Name", "Age", "City"]);
   assertEquals(result.rows, []);
 });
+
+// Edge case tests
+
+Deno.test("drops whitespace-only rows", () => {
+  const csv = "A,B\n   \n1,2";
+  const result = parseCSV(csv);
+  // Whitespace-only row is dropped by splitLines
+  assertEquals(result.rows.length, 1);
+  assertEquals(result.rows[0], ["1", "2"]);
+});
+
+Deno.test("handles mismatched column counts", () => {
+  const csv = "A,B\n1,2,3\n4";
+  const result = parseCSV(csv);
+  assertEquals(result.headers, ["A", "B"]);
+  assertEquals(result.rows[0], ["1", "2", "3"]);
+  assertEquals(result.rows[1], ["4"]);
+});
+
+Deno.test("handles unicode in headers and values", () => {
+  const csv = "名前,年齢\n太郎,30";
+  const result = parseCSV(csv);
+  assertEquals(result.headers, ["名前", "年齢"]);
+  assertEquals(result.rows[0], ["太郎", "30"]);
+});
+
+Deno.test("handles quoted field with embedded newline", () => {
+  const csv = 'Name,Bio\n"Alice","She\nlikes code"';
+  const result = parseCSV(csv);
+  assertEquals(result.rows[0][0], "Alice");
+  assertEquals(result.rows[0][1], "She\nlikes code");
+});
+
+Deno.test("handles single column CSV", () => {
+  const csv = "Name\nAlice\nBob";
+  const result = parseCSV(csv);
+  assertEquals(result.headers, ["Name"]);
+  assertEquals(result.rows, [["Alice"], ["Bob"]]);
+});
+
+Deno.test("handles very long single field without error", () => {
+  const longValue = "x".repeat(10001);
+  const csv = `A\n${longValue}`;
+  const result = parseCSV(csv);
+  assertEquals(result.rows[0][0], longValue);
+});
