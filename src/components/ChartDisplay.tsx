@@ -55,20 +55,33 @@ export default function ChartDisplay({
         <h3 className="text-lg font-semibold">Chart</h3>
         {isEditing
           ? (
-            <select
-              value={chartType}
-              onChange={(e) => {
-                onChartTypeChange(e.target.value as SupportedChartType);
-                setIsEditing(false);
-              }}
-              className="rounded border border-gray-300 px-3 py-1 text-sm"
-            >
-              {CHART_TYPES.map((ct) => (
-                <option key={ct.value} value={ct.value}>
-                  {ct.label}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2">
+              <label htmlFor="chart-type-select" className="sr-only">
+                Chart type
+              </label>
+              <select
+                id="chart-type-select"
+                value={chartType}
+                onChange={(e) => {
+                  onChartTypeChange(e.target.value as SupportedChartType);
+                  setIsEditing(false);
+                }}
+                className="rounded border border-gray-300 px-3 py-1 text-sm"
+              >
+                {CHART_TYPES.map((ct) => (
+                  <option key={ct.value} value={ct.value}>
+                    {ct.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="rounded border border-gray-300 px-3 py-1 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+            </div>
           )
           : (
             <button
@@ -81,6 +94,8 @@ export default function ChartDisplay({
                 className="h-4 w-4"
                 viewBox="0 0 20 20"
                 fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
               >
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
               </svg>
@@ -99,6 +114,27 @@ export default function ChartDisplay({
           }}
         />
       </div>
+      <table className="sr-only">
+        <caption>Chart data</caption>
+        <thead>
+          <tr>
+            <th scope="col">Label</th>
+            {chartConfig.datasets.map((d) => (
+              <th key={d.label} scope="col">{d.label}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {chartConfig.labels.map((label, i) => (
+            <tr key={label}>
+              <th scope="row">{label}</th>
+              {chartConfig.datasets.map((d) => (
+                <td key={d.label}>{d.data[i]}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

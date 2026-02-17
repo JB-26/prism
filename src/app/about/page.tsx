@@ -1,6 +1,6 @@
 export default function AboutPage() {
   return (
-    <div className="max-w-2xl">
+    <div className="mx-auto max-w-2xl">
       <h1 className="mb-4 text-3xl font-bold">About Prism</h1>
       <p className="mb-4 text-gray-700">
         Prism is a &quot;human in the loop&quot; web application for data

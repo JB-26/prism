@@ -14,6 +14,7 @@ export default function FileUpload() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -36,6 +37,7 @@ export default function FileUpload() {
 
     setError(null);
     setViewState("thinking");
+    abortControllerRef.current = new AbortController();
 
     try {
       const csvText = await selectedFile.text();
@@ -44,6 +46,7 @@ export default function FileUpload() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ csvText, fileName: selectedFile.name }),
+        signal: abortControllerRef.current.signal,
       });
 
       const data: AnalyzeResponse = await response.json();
@@ -55,9 +58,20 @@ export default function FileUpload() {
       setResult(data.result);
       setViewState("dashboard");
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setViewState("upload");
+        return;
+      }
       setError(err instanceof Error ? err.message : "An error occurred");
       setViewState("upload");
+    } finally {
+      abortControllerRef.current = null;
     }
+  };
+
+  const handleCancel = () => {
+    abortControllerRef.current?.abort();
+    setViewState("upload");
   };
 
   const handleDelete = () => {
@@ -68,7 +82,18 @@ export default function FileUpload() {
   };
 
   if (viewState === "thinking") {
-    return <ThinkingAnimation />;
+    return (
+      <div className="flex flex-col items-center">
+        <ThinkingAnimation />
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="mt-4 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+      </div>
+    );
   }
 
   if (viewState === "dashboard" && result) {
@@ -81,9 +106,9 @@ export default function FileUpload() {
 
   return (
     <div className="flex flex-col items-center justify-center py-20">
-      <h2 className="mb-6 text-2xl font-bold text-gray-800">
+      <h1 className="mb-6 text-2xl font-bold text-gray-800">
         Upload your CSV file
-      </h2>
+      </h1>
 
       <div className="mb-4 flex flex-col items-center gap-4">
         <label
@@ -114,7 +139,13 @@ export default function FileUpload() {
       </div>
 
       {error && (
-        <p className="mt-2 text-sm font-medium text-red-action">{error}</p>
+        <p
+          role="alert"
+          aria-live="assertive"
+          className="mt-2 text-sm font-medium text-red-action"
+        >
+          {error}
+        </p>
       )}
     </div>
   );
