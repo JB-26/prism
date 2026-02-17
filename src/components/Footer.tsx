@@ -7,9 +7,10 @@ export default function Footer() {
           href="https://www.joshblewitt.dev/"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-medium text-black hover:underline"
+          className="rounded-sm font-medium text-black hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           Joshua Blewitt
+          <span className="sr-only">(opens in new tab)</span>
         </a>
       </div>
     </footer>

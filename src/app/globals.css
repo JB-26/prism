@@ -46,3 +46,14 @@ body {
 .animate-bounce-dot {
   animation: bounce-dot 1.4s infinite ease-in-out both;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .animate-bounce-dot {
+    animation: none;
+  }
+}
