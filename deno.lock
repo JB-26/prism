@@ -4,13 +4,15 @@
     "jsr:@std/assert@1": "1.0.18",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "npm:@anthropic-ai/sdk@0.39": "0.39.0",
+    "npm:@playwright/test@^1.49.0": "1.58.2",
     "npm:@tailwindcss/postcss@4": "4.1.18",
     "npm:@types/node@^18.19.0": "18.19.130",
     "npm:@types/react-dom@19": "19.2.3_@types+react@19.2.14",
     "npm:@types/react@19": "19.2.14",
     "npm:chart.js@^4.4.7": "4.5.1",
-    "npm:next@*": "15.5.12_react@19.2.4_react-dom@19.2.4__react@19.2.4",
-    "npm:next@^15.1.0": "15.5.12_react@19.2.4_react-dom@19.2.4__react@19.2.4",
+    "npm:next@*": "15.5.12_@playwright+test@1.58.2_react@19.2.4_react-dom@19.2.4__react@19.2.4",
+    "npm:next@^15.1.0": "15.5.12_@playwright+test@1.58.2_react@19.2.4_react-dom@19.2.4__react@19.2.4",
+    "npm:playwright@*": "1.58.2",
     "npm:react-chartjs-2@^5.3.0": "5.3.1_chart.js@4.5.1_react@19.2.4",
     "npm:react-dom@19": "19.2.4_react@19.2.4",
     "npm:react@19": "19.2.4",
@@ -278,6 +280,13 @@
       "os": ["win32"],
       "cpu": ["x64"]
     },
+    "@playwright/test@1.58.2": {
+      "integrity": "sha512-akea+6bHYBBfA9uQqSYmlJXn61cTa+jbO87xVLCWbTqbWadRVmhxlXATaOjOgcBaWU4ePo0wB41KMFv3o35IXA==",
+      "dependencies": [
+        "playwright"
+      ],
+      "bin": true
+    },
     "@swc/helpers@0.5.15": {
       "integrity": "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==",
       "dependencies": [
@@ -515,6 +524,11 @@
         "web-streams-polyfill"
       ]
     },
+    "fsevents@2.3.2": {
+      "integrity": "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==",
+      "os": ["darwin"],
+      "scripts": true
+    },
     "function-bind@1.1.2": {
       "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA=="
     },
@@ -670,10 +684,11 @@
       "integrity": "sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==",
       "bin": true
     },
-    "next@15.5.12_react@19.2.4_react-dom@19.2.4__react@19.2.4": {
+    "next@15.5.12_@playwright+test@1.58.2_react@19.2.4_react-dom@19.2.4__react@19.2.4": {
       "integrity": "sha512-Fi/wQ4Etlrn60rz78bebG1i1SR20QxvV8tVp6iJspjLUSHcZoeUXCt+vmWoEcza85ElZzExK/jJ/F6SvtGktjA==",
       "dependencies": [
         "@next/env",
+        "@playwright/test",
         "@swc/helpers",
         "caniuse-lite",
         "postcss@8.4.31",
@@ -692,6 +707,9 @@
         "@next/swc-win32-x64-msvc",
         "sharp"
       ],
+      "optionalPeers": [
+        "@playwright/test"
+      ],
       "bin": true
     },
     "node-domexception@1.0.0": {
@@ -706,6 +724,20 @@
     },
     "picocolors@1.1.1": {
       "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="
+    },
+    "playwright-core@1.58.2": {
+      "integrity": "sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==",
+      "bin": true
+    },
+    "playwright@1.58.2": {
+      "integrity": "sha512-vA30H8Nvkq/cPBnNw4Q8TWz1EJyqgpuinBcHET0YVJVFldr8JDNiU9LaWAE1KqSkRYazuaBhTpB5ZzShOezQ6A==",
+      "dependencies": [
+        "playwright-core"
+      ],
+      "optionalDependencies": [
+        "fsevents"
+      ],
+      "bin": true
     },
     "postcss@8.4.31": {
       "integrity": "sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==",
@@ -867,6 +899,7 @@
     "packageJson": {
       "dependencies": [
         "npm:@anthropic-ai/sdk@0.39",
+        "npm:@playwright/test@^1.49.0",
         "npm:@tailwindcss/postcss@4",
         "npm:@types/node@^18.19.0",
         "npm:@types/react-dom@19",

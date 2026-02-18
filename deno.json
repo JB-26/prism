@@ -10,7 +10,11 @@
     "start": "deno run -A --unstable-bare-node-builtins --unstable-sloppy-imports npm:next start",
     "lint": "deno lint",
     "fmt": "deno fmt",
-    "test": "deno test tests/ --allow-read --allow-env"
+    "test": "deno test tests/ --allow-read --allow-env",
+    "test:e2e": "npx playwright test",
+    "test:e2e:ui": "npx playwright test --ui",
+    "test:e2e:headed": "npx playwright test --headed",
+    "test:e2e:report": "npx playwright show-report"
   },
   "lint": {
     "rules": {
