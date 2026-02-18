@@ -3,7 +3,6 @@ export default function ThinkingAnimation() {
     <div
       className="flex flex-col items-center justify-center py-20"
       role="status"
-      aria-live="polite"
       aria-label="Analysing your CSV file, please wait"
     >
       <p

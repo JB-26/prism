@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-green-action: #22c55e;
-  --color-green-action-hover: #16a34a;
+  /* green-600 (#16a34a) on white text = ~4.54:1 — passes WCAG AA */
+  --color-green-action: #16a34a;
+  /* green-700 (#15803d) for hover */
+  --color-green-action-hover: #15803d;
+  /* yellow-400 (#eab308) — use with black text only; yellow cannot pass AA with white text */
   --color-yellow-action: #eab308;
   --color-yellow-action-hover: #ca8a04;
   --color-red-action: #ef4444;

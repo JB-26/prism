@@ -99,6 +99,16 @@ export default function FileUpload() {
   if (viewState === "dashboard" && result) {
     return (
       <div className="animate-fade-in">
+        {/* Visually hidden live region announces completion to screen readers.
+            role="status" on ThinkingAnimation conveyed the in-progress state;
+            this separate region announces when that state resolves. */}
+        <p
+          role="status"
+          aria-live="polite"
+          className="sr-only"
+        >
+          Analysis complete
+        </p>
         <DashboardView result={result} onDelete={handleDelete} />
       </div>
     );
@@ -111,9 +121,23 @@ export default function FileUpload() {
       </h1>
 
       <div className="mb-4 flex flex-col items-center gap-4">
+        {/* role="button" + tabIndex make the label keyboard-activatable as an
+            interactive element. focus-visible outline keeps it consistent with
+            the rest of the design system. aria-describedby ties the label to
+            the constraint hint for screen reader announcement. */}
         <label
           htmlFor="csv-upload"
-          className="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 px-12 py-8 text-center transition-colors hover:border-gray-400"
+          role="button"
+          tabIndex={0}
+          aria-describedby="csv-upload-hint"
+          onKeyDown={(e) => {
+            // Allow Space/Enter to open the native file picker
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          className="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 px-12 py-8 text-center transition-colors hover:border-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-800"
         >
           <p className="text-gray-500">
             {selectedFile ? selectedFile.name : "Click to select a CSV file"}
@@ -127,6 +151,10 @@ export default function FileUpload() {
             className="hidden"
           />
         </label>
+        {/* Constraint hint referenced by aria-describedby on the drop zone */}
+        <p id="csv-upload-hint" className="text-xs text-gray-500">
+          CSV only, max 3 MB
+        </p>
 
         <button
           type="button"

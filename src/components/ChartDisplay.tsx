@@ -87,7 +87,7 @@ export default function ChartDisplay({
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-1 rounded bg-yellow-action px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-yellow-action-hover"
+              className="flex items-center gap-1 rounded bg-yellow-action px-3 py-1 text-sm font-medium text-black transition-colors hover:bg-yellow-action-hover"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

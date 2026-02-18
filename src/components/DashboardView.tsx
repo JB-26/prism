@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChartDisplay from "@/components/ChartDisplay";
 import ExecutiveSummary from "@/components/ExecutiveSummary";
 import SaveButton from "@/components/SaveButton";
@@ -19,6 +19,15 @@ export default function DashboardView(
   );
   const [summary, setSummary] = useState(result.summary);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Focus the Cancel button when the delete confirmation appears so keyboard
+  // and screen reader users are immediately aware of the new UI state.
+  const deleteConfirmCancelRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (showDeleteConfirm) {
+      deleteConfirmCancelRef.current?.focus();
+    }
+  }, [showDeleteConfirm]);
 
   const handleDeleteClick = () => {
     setShowDeleteConfirm(true);
@@ -55,6 +64,7 @@ export default function DashboardView(
                   Confirm
                 </button>
                 <button
+                  ref={deleteConfirmCancelRef}
                   type="button"
                   onClick={handleDeleteCancel}
                   className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-100"
