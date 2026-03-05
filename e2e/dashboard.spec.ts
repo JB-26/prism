@@ -16,7 +16,7 @@ test.describe("Dashboard — chart display", () => {
     await uploadAndReachDashboard(page);
 
     // Assert
-    await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Monthly Sales Performance" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Chart" })).toBeVisible();
   });
 
@@ -328,7 +328,7 @@ test.describe("Dashboard — delete flow", () => {
 
     // Assert — confirmation gone, dashboard still shown
     await expect(page.getByText("Are you sure?")).not.toBeVisible();
-    await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Monthly Sales Performance" })).toBeVisible();
   });
 
   test("should restore the Delete button after cancelling the confirmation", async ({

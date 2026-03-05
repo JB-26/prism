@@ -25,6 +25,7 @@ export const MOCK_ANALYSIS_RESULT = {
       "Sales data shows strong performance in March with 200 units, representing the peak of the period. " +
       "February saw the lowest performance at 85 units. " +
       "Overall trend suggests moderate growth with a notable mid-period spike.",
+    title: "Monthly Sales Performance",
   },
 };
 

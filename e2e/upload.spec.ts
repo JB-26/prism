@@ -84,7 +84,7 @@ test.describe("Upload page — file selection", () => {
     await fileInput.setInputFiles(INVALID_TYPE_FILE);
 
     // Assert — error message shown, button stays disabled
-    const errorMessage = page.locator('p[role="alert"]');
+    const errorMessage = page.locator('[role="alert"]:not(#__next-route-announcer__)');
     await expect(errorMessage).toBeVisible();
     await expect(errorMessage).toContainText("Please upload a CSV file");
     await expect(page.getByRole("button", { name: "Upload" })).toBeDisabled();
@@ -102,7 +102,7 @@ test.describe("Upload page — file selection", () => {
     await fileInput.setInputFiles(oversizedFile);
 
     // Assert — size error shown, button stays disabled
-    const errorMessage = page.locator('p[role="alert"]');
+    const errorMessage = page.locator('[role="alert"]:not(#__next-route-announcer__)');
     await expect(errorMessage).toBeVisible();
     await expect(errorMessage).toContainText("3MB");
     await expect(page.getByRole("button", { name: "Upload" })).toBeDisabled();
@@ -115,13 +115,13 @@ test.describe("Upload page — file selection", () => {
     await page.goto("/");
     const fileInput = page.locator('input[type="file"]');
     await fileInput.setInputFiles(INVALID_TYPE_FILE);
-    await expect(page.locator('p[role="alert"]')).toBeVisible();
+    await expect(page.locator('[role="alert"]:not(#__next-route-announcer__)')).toBeVisible();
 
     // Act — replace with a valid file
     await fileInput.setInputFiles(VALID_CSV);
 
     // Assert — error is gone and button becomes enabled
-    await expect(page.locator('p[role="alert"]')).not.toBeVisible();
+    await expect(page.locator('[role="alert"]:not(#__next-route-announcer__)')).not.toBeVisible();
     await expect(page.getByRole("button", { name: "Upload" })).toBeEnabled();
   });
 });
@@ -148,6 +148,7 @@ test.describe("Upload page — upload flow", () => {
               datasets: [{ label: "x", data: [1] }],
             },
             summary: "Test summary",
+            title: "Test Report",
           },
         }),
       });
@@ -201,7 +202,7 @@ test.describe("Upload page — upload flow", () => {
     await page.getByRole("button", { name: "Upload" }).click();
 
     // Assert — error is shown and we return to upload state
-    const errorMessage = page.locator('p[role="alert"]');
+    const errorMessage = page.locator('[role="alert"]:not(#__next-route-announcer__)');
     await expect(errorMessage).toBeVisible({ timeout: 10_000 });
     await expect(errorMessage).toContainText("Analysis failed");
     await expect(
@@ -221,7 +222,7 @@ test.describe("Upload page — upload flow", () => {
     await page.getByRole("button", { name: "Upload" }).click();
 
     // Assert
-    await expect(page.locator('p[role="alert"]')).toContainText(
+    await expect(page.locator('[role="alert"]:not(#__next-route-announcer__)')).toContainText(
       "CSV file appears to be empty",
       { timeout: 10_000 },
     );
@@ -238,9 +239,9 @@ test.describe("Upload page — upload flow", () => {
     // Act
     await page.getByRole("button", { name: "Upload" }).click();
 
-    // Assert — dashboard heading signals success
+    // Assert — Save Report button signals successful dashboard load
     await expect(
-      page.getByRole("heading", { name: "Results" }),
+      page.getByRole("button", { name: "Save Report" }),
     ).toBeVisible({ timeout: 15_000 });
   });
 
@@ -262,6 +263,7 @@ test.describe("Upload page — upload flow", () => {
               datasets: [{ label: "x", data: [1] }],
             },
             summary: "Test summary",
+            title: "Test Report",
           },
         }),
       });
@@ -300,6 +302,7 @@ test.describe("Upload page — upload flow", () => {
               datasets: [{ label: "x", data: [1] }],
             },
             summary: "Test summary",
+            title: "Test Report",
           },
         }),
       });
@@ -309,7 +312,7 @@ test.describe("Upload page — upload flow", () => {
 
     // Act
     await page.getByRole("button", { name: "Upload" }).click();
-    await page.getByRole("heading", { name: "Results" }).waitFor({
+    await page.getByRole("button", { name: "Save Report" }).waitFor({
       state: "visible",
       timeout: 15_000,
     });
@@ -334,7 +337,7 @@ test.describe("Upload page — upload flow", () => {
     await page.getByRole("button", { name: "Upload" }).click();
 
     // Assert — an error message appears and the upload page is shown again
-    const errorMessage = page.locator('p[role="alert"]');
+    const errorMessage = page.locator('[role="alert"]:not(#__next-route-announcer__)');
     await expect(errorMessage).toBeVisible({ timeout: 10_000 });
     await expect(
       page.getByRole("heading", { name: "Upload your CSV file" }),
@@ -368,7 +371,7 @@ test.describe("Upload page — re-upload after delete", () => {
 
     // Assert — dashboard appears again
     await expect(
-      page.getByRole("heading", { name: "Results" }),
+      page.getByRole("button", { name: "Save Report" }),
     ).toBeVisible({ timeout: 15_000 });
   });
 });
@@ -383,13 +386,13 @@ test.describe("Upload page — oversized file recovery", () => {
     await page.goto("/");
     const fileInput = page.locator('input[type="file"]');
     await fileInput.setInputFiles(makeOversizedCsvFile());
-    await expect(page.locator('p[role="alert"]')).toBeVisible();
+    await expect(page.locator('[role="alert"]:not(#__next-route-announcer__)')).toBeVisible();
 
     // Act — replace with a valid file
     await fileInput.setInputFiles(VALID_CSV);
 
     // Assert — error disappears and upload button becomes enabled
-    await expect(page.locator('p[role="alert"]')).not.toBeVisible();
+    await expect(page.locator('[role="alert"]:not(#__next-route-announcer__)')).not.toBeVisible();
     await expect(page.getByRole("button", { name: "Upload" })).toBeEnabled();
   });
 });
