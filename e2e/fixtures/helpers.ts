@@ -21,8 +21,8 @@ export async function uploadAndReachDashboard(page: Page): Promise<void> {
   // The Upload button becomes enabled once a valid file is selected
   await page.getByRole("button", { name: "Upload" }).click();
 
-  // Wait for the dashboard heading to confirm we left the "thinking" state
-  await page.getByRole("heading", { name: "Results" }).waitFor({
+  // Wait for the Save Report button to confirm we left the "thinking" state
+  await page.getByRole("button", { name: "Save Report" }).waitFor({
     state: "visible",
     timeout: 15_000,
   });

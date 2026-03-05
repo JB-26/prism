@@ -8,17 +8,23 @@ interface SaveButtonProps {
   chartType: SupportedChartType;
   chartConfig: ChartConfiguration;
   summary: string;
+  title: string;
+  csvText: string;
 }
 
 export default function SaveButton({
   chartType,
   chartConfig,
   summary,
+  title,
+  csvText,
 }: SaveButtonProps) {
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
-    const html = generateHTML(chartType, chartConfig, summary);
+    const lines = csvText.split("\n").filter((line) => line.trim() !== "");
+    const totalRows = Math.max(0, lines.length - 1);
+    const html = generateHTML(chartType, chartConfig, summary, title, csvText, totalRows);
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
 

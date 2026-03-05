@@ -13,6 +13,7 @@ interface AnalysisResult {
     }[];
   };
   summary: string;
+  title: string;
 }
 
 function parseJSON(text: string): AnalysisResult {
@@ -37,6 +38,7 @@ const validResult: AnalysisResult = {
     datasets: [{ label: "Test", data: [1, 2], borderWidth: 1 }],
   },
   summary: "Test summary",
+  title: "Test Title",
 };
 
 Deno.test("parses clean JSON response", () => {
@@ -45,6 +47,7 @@ Deno.test("parses clean JSON response", () => {
   assertEquals(result.chartType, "bar");
   assertEquals(result.chartConfig.labels, ["A", "B"]);
   assertEquals(result.summary, "Test summary");
+  assertEquals(result.title, "Test Title");
 });
 
 Deno.test("parses JSON wrapped in markdown json fences", () => {

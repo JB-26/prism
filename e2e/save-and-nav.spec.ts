@@ -345,7 +345,7 @@ test.describe("Full user journey", () => {
     // --- Step 1: Upload a CSV file ---
     await uploadAndReachDashboard(page);
 
-    await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Monthly Sales Performance" })).toBeVisible();
 
     // --- Step 2: Verify chart is present ---
     await expect(page.locator("canvas")).toBeVisible();

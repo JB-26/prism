@@ -15,6 +15,7 @@ export interface AnalysisResult {
   chartType: SupportedChartType;
   chartConfig: ChartConfiguration;
   summary: string;
+  title: string;
 }
 
 export interface ChartConfiguration {

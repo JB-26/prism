@@ -57,7 +57,8 @@ export async function POST(request: Request) {
     if (
       !Array.isArray(result.chartConfig?.labels) ||
       !Array.isArray(result.chartConfig?.datasets) ||
-      typeof result.summary !== "string"
+      typeof result.summary !== "string" ||
+      typeof result.title !== "string"
     ) {
       return NextResponse.json<AnalyzeResponse>(
         {

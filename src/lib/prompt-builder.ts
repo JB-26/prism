@@ -27,6 +27,7 @@ export function buildPrompt(csv: ParsedCSV, fileName: string): string {
 1. The most appropriate chart type from: bar, line, pie, doughnut, polarArea, radar
 2. A Chart.js chart configuration with labels and datasets
 3. An executive summary of the data (2-3 paragraphs)
+4. A short report title (5–10 words, plain text, no trailing punctuation)
 
 CSV Data:
 ${csvPreview}${truncationNote}
@@ -46,7 +47,8 @@ Respond with valid JSON in this exact format (no markdown code blocks):
       }
     ]
   },
-  "summary": "Executive summary here..."
+  "summary": "Executive summary here...",
+  "title": "Short Descriptive Report Title"
 }
 
 Requirements for the chart configuration:
@@ -54,5 +56,6 @@ Requirements for the chart configuration:
 - Ensure tooltips will work by providing properly structured data
 - For pie/doughnut charts, use an array of colors matching the number of data points
 - Choose the chart type that best represents the data relationships
-- The summary should highlight key trends, outliers, and actionable insights`;
+- The summary should highlight key trends, outliers, and actionable insights
+- The title should describe the key insight or dataset name`;
 }

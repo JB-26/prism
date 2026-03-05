@@ -3,21 +3,24 @@
 import { useEffect, useRef, useState } from "react";
 import ChartDisplay from "@/components/ChartDisplay";
 import ExecutiveSummary from "@/components/ExecutiveSummary";
+import ReportTitle from "@/components/ReportTitle";
 import SaveButton from "@/components/SaveButton";
 import type { AnalysisResult, SupportedChartType } from "@/types";
 
 interface DashboardViewProps {
   result: AnalysisResult;
+  csvText: string;
   onDelete: () => void;
 }
 
 export default function DashboardView(
-  { result, onDelete }: DashboardViewProps,
+  { result, csvText, onDelete }: DashboardViewProps,
 ) {
   const [chartType, setChartType] = useState<SupportedChartType>(
     result.chartType,
   );
   const [summary, setSummary] = useState(result.summary);
+  const [title, setTitle] = useState(result.title);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Focus the Cancel button when the delete confirmation appears so keyboard
@@ -44,13 +47,24 @@ export default function DashboardView(
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Results</h1>
-        <div className="flex gap-3">
+      {/*
+        Two-row header:
+          Row 1 — ReportTitle owns its full width. It handles its own
+                  [h1 | Edit] / [input | Save | Cancel] layout internally,
+                  matching the ExecutiveSummary card pattern.
+          Row 2 — Dashboard-level action buttons, right-aligned and always
+                  stable regardless of how long the report title is.
+      */}
+      <div className="mb-2">
+        <ReportTitle title={title} onTitleChange={setTitle} />
+      </div>
+      <div className="mb-6 flex items-center justify-end gap-3">
           <SaveButton
             chartType={chartType}
             chartConfig={result.chartConfig}
             summary={summary}
+            title={title}
+            csvText={csvText}
           />
           {showDeleteConfirm
             ? (
@@ -97,7 +111,6 @@ export default function DashboardView(
               </button>
             )}
         </div>
-      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <ChartDisplay
@@ -110,6 +123,53 @@ export default function DashboardView(
           onSummaryChange={setSummary}
         />
       </div>
+
+      {(() => {
+        const lines = csvText.split("\n").filter((l) => l.trim() !== "");
+        if (lines.length < 2) return null;
+        const headers = lines[0].split(",");
+        const dataRows = lines.slice(1);
+        const preview = dataRows.slice(0, 10);
+        const totalRows = dataRows.length;
+        return (
+          <details className="mt-6 rounded-lg border border-gray-200">
+            <summary className="cursor-pointer px-6 py-4 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+              Source Data &mdash; {Math.min(preview.length, 10)} of {totalRows}{" "}
+              rows shown
+            </summary>
+            <div className="overflow-x-auto px-6 pb-6">
+              <table className="w-full border-collapse text-xs">
+                <thead>
+                  <tr>
+                    {headers.map((h, i) => (
+                      <th
+                        key={i}
+                        className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-left font-semibold"
+                      >
+                        {h.trim()}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {preview.map((row, ri) => (
+                    <tr key={ri}>
+                      {row.split(",").map((cell, ci) => (
+                        <td
+                          key={ci}
+                          className="border border-gray-200 px-3 py-1.5"
+                        >
+                          {cell.trim()}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        );
+      })()}
     </div>
   );
 }

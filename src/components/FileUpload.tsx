@@ -13,6 +13,7 @@ export default function FileUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [csvText, setCsvText] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -56,6 +57,7 @@ export default function FileUpload() {
       }
 
       setResult(data.result);
+      setCsvText(csvText);
       setViewState("dashboard");
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -76,6 +78,7 @@ export default function FileUpload() {
 
   const handleDelete = () => {
     setResult(null);
+    setCsvText(null);
     setSelectedFile(null);
     setViewState("upload");
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -109,7 +112,7 @@ export default function FileUpload() {
         >
           Analysis complete
         </p>
-        <DashboardView result={result} onDelete={handleDelete} />
+        <DashboardView result={result} csvText={csvText ?? ""} onDelete={handleDelete} />
       </div>
     );
   }
@@ -167,13 +170,35 @@ export default function FileUpload() {
       </div>
 
       {error && (
-        <p
+        /* role="alert" already carries aria-live="assertive" semantics on a
+           div — the browser will announce the full content immediately when
+           this node is injected into the DOM. The SVG is aria-hidden so
+           screen readers skip the icon and only read the text content. */
+        <div
           role="alert"
           aria-live="assertive"
-          className="mt-2 text-sm font-medium text-red-action"
+          className="mt-4 flex items-start gap-3 rounded-lg border border-red-action bg-[#fef2f2] px-4 py-3 text-sm"
         >
-          {error}
-        </p>
+          {/* Circle-X icon — decorative, aria-hidden */}
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="mt-0.5 h-5 w-5 shrink-0 text-red-action"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <div>
+            <p className="font-semibold text-red-action">Upload error</p>
+            <p className="mt-0.5 text-gray-900">{error}</p>
+          </div>
+        </div>
       )}
     </div>
   );
